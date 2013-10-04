@@ -6,6 +6,8 @@ import logging
 from threading import Lock
 from threading import Thread
 from threading import Timer
+from threading import Event
+from threading import Barrier
 
 from t2db_buffer import communicator
 from t2db_objects import psocket
@@ -182,11 +184,15 @@ gFinalise = None
 # Main Function
 def startBuffer(config):
     stopEvent = Event()
-    barrier = Barrier(2)
+    barrier = Barrier(3)#Three threads. Main, Server, Signal
     finalise = True
     setGlobalVariable(stopEvent, barrier, finalise)
     # Call server function
-    server(config.socket_port, config.max_connection, stopEvent, barrier, config.timeout, config.timer_seconds, config.urldatabase, config.user, config.password)
+    bs = BufferServer(config.socket_port, config.max_connection, 
+            stopEvent, barrier, config.timeout, config.timer_seconds, 
+            config.urldatabase, config.user, config.password)
+    bs.start()
+    barrier.wait()
 
 def setGlobalVariable(stopEvent, barrier, finalise):
     global gStopEvent

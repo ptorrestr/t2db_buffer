@@ -1,0 +1,3 @@
+[submodule "t2db_objects"]
+	path = t2db_objects
+	url = https://github.com/ptorrestr/t2db_objects.git

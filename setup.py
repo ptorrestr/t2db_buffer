@@ -6,7 +6,7 @@ def readme():
 
 setup(
     name='t2db_buffer',
-    version='0.1.0',
+    version='0.1.1',
     description='Buffer for t2db',
     long_description = readme(),
     classifiers=[
@@ -19,7 +19,7 @@ setup(
     packages=['t2db_buffer', 't2db_buffer.tests'],
     install_requires=[
         't2db_objects >= 0.5.3',
-	    't2db_worker >= 0.2.1',
+	    't2db_worker >= 0.3.0',
         'requests >= 2.0.0',
     ],
     entry_points = {

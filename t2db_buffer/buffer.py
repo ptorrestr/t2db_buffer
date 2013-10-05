@@ -129,8 +129,10 @@ def server(bufferServer):
             logger.warn("Timeout incoming connection")
     #TODO:wait for child threads
     #Send signal to reporter. Server ends
+    logger.info("StopEvent occurs!")
+    logger.debug("Stoping timer")
     bufferServer.stopTimer()
-    logger.info("Timer stoped")
+    logger.debug("Waiting in barrier: " + str(bufferServer.barrier))
     bufferServer.barrier.wait()
     bufferServer.socketServer.close()
     logger.info("Server thread finished")
@@ -207,8 +209,10 @@ def signal_handler(signal, frame):
     global gStopEvent
     global gBarrier
     global gFinalise
-    print ("You pressed Ctrl+C!, stoping")
+    logger.info ("You pressed Ctrl+C!, stoping")
     gStopEvent.set()
+    logger.info ("StopEvent triggered")
+    logger.debug("Waiting in barrier: " + str(gBarrier))
     gBarrier.wait()
     if gFinalise:
         sys.exit(0)

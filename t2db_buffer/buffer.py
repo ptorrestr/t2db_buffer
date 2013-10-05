@@ -1,18 +1,11 @@
-import signal
-import argparse
-import sys
 import logging
 
 from threading import Lock
 from threading import Thread
 from threading import Timer
-from threading import Event
-from threading import Barrier
 
 from t2db_buffer import communicator
 from t2db_objects import psocket
-from t2db_objects import utilities
-from t2db_objects import objects
 from t2db_worker import buffer_communicator as bc
 
 # create logger
@@ -177,86 +170,3 @@ class BufferServer(object):
     def start(self):
         serverThread = ServerThread(self)
         serverThread.start()
-
-# Global variables for signal_handler function
-gStopEvent = None
-gBarrier = None
-gFinalise = None
-
-# Main Function
-def startBuffer(config):
-    stopEvent = Event()
-    barrier = Barrier(3)#Three threads. Main, Server, Signal
-    finalise = True
-    setGlobalVariable(stopEvent, barrier, finalise)
-    # Call server function
-    bs = BufferServer(config.socket_port, config.max_connection, 
-            stopEvent, barrier, config.timeout, config.timer_seconds, 
-            config.urldatabase, config.user, config.password)
-    bs.start()
-    barrier.wait()
-
-def setGlobalVariable(stopEvent, barrier, finalise):
-    global gStopEvent
-    global gBarrier
-    global gFinalise
-    gStopEvent = stopEvent
-    gBarrier = barrier
-    gFinalise = finalise
-
-## this function controls SIGINT signal (Ctrl+C).
-def signal_handler(signal, frame):
-    global gStopEvent
-    global gBarrier
-    global gFinalise
-    logger.info ("You pressed Ctrl+C!, stoping")
-    gStopEvent.set()
-    logger.info ("StopEvent triggered")
-    logger.debug("Waiting in barrier: " + str(gBarrier))
-    gBarrier.wait()
-    if gFinalise:
-        sys.exit(0)
-        
-def main():
-    ## Start signal detection
-    signal.signal(signal.SIGINT, signal_handler)
-
-    ## Parser input arguments
-    parser = argparse.ArgumentParser()
-    # positionals
-    parser.add_argument('--config',
-        help = 'The configure file path for buffer server',
-        type = str,
-        required = True)
-
-    args = parser.parse_args()
-
-    ## Create configuration
-    configurationFields = [
-        {"name":"urldatabase", "kind":"mandatory", "type":str},
-        {"name":"user", "kind":"mandatory", "type":str},
-        {"name":"password", "kind":"mandatory", "type":str},
-        {"name":"timer_seconds", "kind":"mandatory", "type":int},
-        {"name":"socket_port", "kind":"mandatory", "type":int},
-        {"name":"max_connection", "kind":"mandatory", "type":int},
-        {"name":"timeout", "kind":"mandatory", "type":int},
-        ]
-    try:
-        rawConfigurationNoFormat = utilities.readConfigFile(args.config)
-        rawConfiguration = objects.formatHash(rawConfigurationNoFormat
-            , configurationFields)
-        configuration = objects.Configuration(configurationFields
-            , rawConfiguration)
-    except Exception as e:
-        logger.error("Program configuration failed: " + str(e))
-        sys.exit(1)
-    
-    ## Start program!
-    try:
-        startBuffer(configuration)
-    except Exception as e:
-        logger.error("Program end unexpectely: " + str(e))
-        sys.exit(2)
-    logger.info("Program ended!")
-    ## End program!
-    sys.exit(0)

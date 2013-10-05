@@ -18,13 +18,14 @@ setup(
     license='GNU',
     packages=['t2db_buffer', 't2db_buffer.tests'],
     install_requires=[
-        't2db_objects >= 0.5.3',
+        't2db_objects >= 0.5.4',
 	    't2db_worker >= 0.3.0',
         'requests >= 2.0.0',
     ],
     entry_points = {
         'console_scripts':[
-            't2db_buffer = t2db_buffer.buffer:main'
+            't2db_buffer = t2db_buffer.run:main',
+	    't2db_buffer-d = t2db_buffer.run:main_daemon',
         ]
     },
     test_suite='t2db_buffer.tests',

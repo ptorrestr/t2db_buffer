@@ -1,3 +1,21 @@
+commit dd5e804890c38e06558bdeb616a342c66dc5ec82
+Author: Pablo Torres <pablo.torres@deri.org>
+Date:   Sat Oct 5 16:33:06 2013 +0100
+
+    support for daemon
+
+commit 2f04f3ab651fec029596ca69d3c04ccdf861c094
+Author: Pablo Torres <pablo.torres@deri.org>
+Date:   Sat Oct 5 14:25:17 2013 +0100
+
+    add new logs
+
+commit d45a14e28d7a8a4eb44cacfa1c4569f4e5ce5d32
+Author: Pablo Torres <pablo.torres@deri.org>
+Date:   Fri Oct 4 18:54:59 2013 +0100
+
+    create CHANGES file
+
 commit 850df3d8712260535700eb29bace222f0f9962c3
 Author: Pablo Torres <pablo.torres@deri.org>
 Date:   Fri Oct 4 18:54:24 2013 +0100
